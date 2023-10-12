@@ -116,3 +116,117 @@ SELECT
 FROM countries c 
 WHERE continent = 'Africa' AND region_in_world IS NOT NULL
 GROUP BY region_in_world ;
+
+------------- PART TWO -----------
+
+SELECT *,
+	confirmed - recovered/2 AS new_column
+FROM covid19_basic cb;
+
+SELECT 
+	sum(recovered)
+FROM covid19_basic cb 
+WHERE date = '2020_08_30';
+
+SELECT sum(confirmed - recovered)
+FROM covid19_basic cb 
+WHERE date = '2020-08-30';
+
+SELECT confirmed
+FROM covid19_basic cb 
+WHERE date = '2020-08-30' AND country = 'Czechia';
+
+SELECT 
+	country,
+	sum(confirmed)
+FROM covid19_basic cb 
+WHERE month(date) = 8
+GROUP BY country;
+
+SELECT country,
+	sum(confirmed)
+FROM covid19_basic cb 
+WHERE country IN ('Czechia', 'Slovakia', 'Austria')
+	AND date BETWEEN '2020-08-20' AND '2020-08-30'
+GROUP BY country;
+
+SELECT country, sum( confirmed )
+FROM covid19_basic
+WHERE country IN ('Czechia', 'Slovakia', 'Austria')
+    AND date >= '2020-08-20' AND date <= '2020-08-30'
+GROUP BY country;
+
+SELECT country,
+	max(confirmed)
+FROM covid19_basic cb
+GROUP BY country;
+
+SELECT
+	country,
+	max(confirmed)
+FROM covid19_basic_differences cbd 
+WHERE country LIKE 'c%'
+GROUP BY country;
+
+SELECT
+	country
+FROM covid19_basic_differences cbd 
+WHERE confirmed = 21669;
+
+SELECT
+	country
+FROM countries c 
+WHERE population > 50000000
+
+SELECT 
+	date,
+	country,
+	sum(confirmed)
+FROM covid19_basic_differences cbd 
+WHERE date >= '2020-08-01' AND country IN(
+	SELECT
+		country
+	FROM countries c 
+	WHERE population > 50000000
+)
+GROUP BY date,
+	country;
+	
+SELECT 
+	province,
+	sum(confirmed)
+FROM covid19_detail_us_differences cdud 
+WHERE province LIKE 'Arkansas';
+
+SELECT 
+	country,
+	province,
+	population
+FROM lookup_table lt 
+WHERE country = 'Brazil'
+ORDER BY population DESC;
+
+SELECT 
+	date,
+	round(sum(confirmed), 2),
+	round(avg(confirmed), 2)
+FROM covid19_basic cb
+GROUP BY date
+ORDER BY date DESC;
+
+SELECT 
+	province,
+	sum(confirmed)
+FROM covid19_detail_us cdu 
+WHERE date = '2020-08-30';
+GROUP BY province;
+
+SELECT
+	date,
+	country,
+	sum(confirmed)
+FROM covid19_basic_differences cbd 
+GROUP BY
+	date,
+	country
+ORDER BY confirmed DESC;
