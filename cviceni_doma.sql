@@ -76,3 +76,43 @@ FROM countries c
 WHERE continent = 'South America'
 ORDER BY landlocked DESC;
 
+SELECT
+	continent,
+	region_in_world,
+	country,
+	sum(population)
+FROM countries c
+WHERE continent IS NOT NULL
+GROUP BY
+	continent,
+	region_in_world
+ORDER BY continent,
+	population DESC;
+	
+SELECT 
+	continent,
+	religion,
+	sum(population),
+	count(country)
+FROM countries c 
+GROUP BY 
+	continent,
+	religion 
+ORDER BY continent,
+	sum(population) DESC;
+
+SELECT 
+	city,
+	year(date),
+	avg(temp)	
+FROM weather
+WHERE city IS NOT NULL
+GROUP BY city,
+	year(date);
+
+SELECT 
+	region_in_world,
+	round(avg(yearly_average_temperature), 2) 
+FROM countries c 
+WHERE continent = 'Africa' AND region_in_world IS NOT NULL
+GROUP BY region_in_world ;
