@@ -230,3 +230,117 @@ GROUP BY
 	date,
 	country
 ORDER BY confirmed DESC;
+
+SELECT
+	country,
+	round(avg(population), 2)
+FROM lookup_table lt
+WHERE lat > 60
+GROUP BY country;
+
+SELECT avg(population)
+FROM lookup_table lt 
+WHERE lat >= 60;
+
+SELECT 
+	count(distinct country),
+	avg(population),
+	max(population),
+	min(population),
+	round(max(population)/min(population), 2) AS maxminpop_division
+FROM lookup_table lt 
+WHERE lat > 60 AND country IS NOT NULL;
+
+SELECT 
+	religion,
+	avg(population),
+	avg(surface_area)
+FROM countries
+WHERE religion IS NOT NULL
+GROUP BY religion;
+
+SELECT 
+	count(country),
+	max(population),
+	min(population)
+FROM countries
+WHERE lower(currency_name) LIKE lower('%dollar%');
+
+
+SELECT 
+	country,
+	currency_code,
+	currency_name
+FROM countries c
+WHERE lower(currency_name) LIKE lower('%dollar%') OR currency_code = 'USD';
+
+
+SELECT 
+	continent,
+	country,
+	currency_code
+FROM countries
+WHERE currency_code = 'EUR' AND continent = 'Europe';
+
+SELECT 
+	continent,
+	country,
+	currency_code
+FROM countries
+WHERE currency_code = 'EUR' AND continent != 'Europe';
+
+SELECT 
+	count(avg_height)
+FROM countries c
+WHERE avg_height IS NOT NULL;
+
+SELECT 
+	continent,
+	avg(avg_height)
+FROM countries c
+GROUP BY continent;
+
+SELECT 
+	continent ,
+	round( sum(population*avg_height)/sum(population) , 2) AS weighted_average
+FROM countries c 
+WHERE avg_height IS NOT NULL
+GROUP BY continent
+ORDER BY round( sum(population*avg_height)/sum(population) , 2) DESC
+;
+
+CREATE OR REPLACE VIEW v_petr_mikolajek_population_density AS
+SELECT
+	region_in_world,
+	round(avg(population_density), 2) AS simple_avg_density,
+	round(sum(population_density*surface_area)/sum(surface_area),2) AS weighted_avg_density
+FROM countries
+WHERE region_in_world IS NOT NULL AND population_density IS NOT NULL
+GROUP BY region_in_world;
+
+SELECT *,
+	abs(avg_density - vazeny_prumer) AS diff_avg_density
+FROM v_petr_mikolajek_population_density
+ORDER BY diff_avg_density DESC;
+
+SELECT
+	country,
+	population_density 
+	surface_area 
+FROM countries
+WHERE region_in_world = 'Western Europe'
+ORDER BY population_density DESC;
+
+SELECT 
+    0 AS `Monaco_included`,
+    round( avg(population_density), 2 ) AS simple_avg_density,
+    round( sum(surface_area*population_density) / sum(surface_area), 2 ) AS weighted_avg_density
+FROM countries c 
+WHERE region_in_world = 'Western Europe' AND country != 'Monaco'
+UNION
+SELECT
+    1 AS `Monaco_included`,
+    simple_avg_density , 
+    weighted_avg_density 
+FROM v_petr_mikolajek_population_density vpmpd  
+WHERE region_in_world = 'Western Europe';
